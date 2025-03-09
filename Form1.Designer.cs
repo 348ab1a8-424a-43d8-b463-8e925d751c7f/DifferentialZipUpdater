@@ -34,7 +34,7 @@
             this.forceUpdateButton = new System.Windows.Forms.Button();
             this.folderPath = new System.Windows.Forms.Label();
             this.folderPathUrl = new System.Windows.Forms.TextBox();
-            this.Browse = new System.Windows.Forms.Button();
+            this.BrowseButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // updateButton
@@ -94,22 +94,22 @@
             this.folderPathUrl.Size = new System.Drawing.Size(269, 20);
             this.folderPathUrl.TabIndex = 5;
             // 
-            // Browse
+            // BrowseButton
             // 
-            this.Browse.Location = new System.Drawing.Point(363, 11);
-            this.Browse.Name = "Browse";
-            this.Browse.Size = new System.Drawing.Size(75, 23);
-            this.Browse.TabIndex = 6;
-            this.Browse.Text = "Browse";
-            this.Browse.UseVisualStyleBackColor = true;
-            this.Browse.Click += new System.EventHandler(this.Browse_Click);
+            this.BrowseButton.Location = new System.Drawing.Point(363, 11);
+            this.BrowseButton.Name = "BrowseButton";
+            this.BrowseButton.Size = new System.Drawing.Size(75, 23);
+            this.BrowseButton.TabIndex = 6;
+            this.BrowseButton.Text = "Browse";
+            this.BrowseButton.UseVisualStyleBackColor = true;
+            this.BrowseButton.Click += new System.EventHandler(this.BrowseButton_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(458, 301);
-            this.Controls.Add(this.Browse);
+            this.Controls.Add(this.BrowseButton);
             this.Controls.Add(this.folderPathUrl);
             this.Controls.Add(this.folderPath);
             this.Controls.Add(this.forceUpdateButton);
@@ -131,7 +131,7 @@
         private System.Windows.Forms.Button forceUpdateButton;
         private System.Windows.Forms.Label folderPath;
         private System.Windows.Forms.TextBox folderPathUrl;
-        private System.Windows.Forms.Button Browse;
+        private System.Windows.Forms.Button BrowseButton;
     }
 }
 
