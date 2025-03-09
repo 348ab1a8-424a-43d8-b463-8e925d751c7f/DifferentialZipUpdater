@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,7 +24,7 @@ namespace DifferentialZipUpdater
 
         private void updateButton_Click(object sender, EventArgs e)
         {
-            
+            Updater.ZipPreviousVersion(targetFolderPath);
         }
 
         private void revertButton_Click(object sender, EventArgs e)
@@ -45,7 +46,7 @@ namespace DifferentialZipUpdater
         {
             OpenFileDialog browseFolderDialog = new OpenFileDialog();
             browseFolderDialog.InitialDirectory = "c:\\";
-            browseFolderDialog.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
+            browseFolderDialog.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*"; // TO DO: Change filetype to only .EXE
             browseFolderDialog.FilterIndex = 2;
             browseFolderDialog.RestoreDirectory = true;
 
@@ -69,9 +70,40 @@ namespace DifferentialZipUpdater
         /// Zips up a folder. Requires PATH to target folder to be zipped.
         /// <param name="targetFolder">Single parameter.</param>
         /// </summary>
-        public void ZipFolder(string targetFolder)
+        public static void ZipPreviousVersion(string targetFolder)
         {
+            // Create a directory first for Previous Version.
+            // Cannot zip to same directory being zipped as it's in use.
+            string prevVersionFolderPath = "D:\\TestEnv\\PreviousVersion";
+            try
+            {
+                if (!Directory.Exists(prevVersionFolderPath))
+                {
+                    Directory.CreateDirectory(prevVersionFolderPath);
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("The process failed: {0}", e.ToString());
+            }
 
+            // Create a Zip file for PreviousVersion
+            // If it exists, delete then create.
+            // If it doesn't exist, just create.
+
+            if (File.Exists(prevVersionFolderPath + "\\PreviousVersion.zip"))
+            {
+                File.Delete(prevVersionFolderPath + "\\PreviousVersion.zip");
+                ZipFile.CreateFromDirectory(targetFolder, prevVersionFolderPath + "\\PreviousVersion.zip");
+            }
+            else
+            {
+                ZipFile.CreateFromDirectory(targetFolder, prevVersionFolderPath + "\\PreviousVersion.zip");
+            }
+
+            // Check latest version location, see if its archived, if not, then zip it to an archive.
+
+            // If current version is old, then should 
         }
     }
 }
