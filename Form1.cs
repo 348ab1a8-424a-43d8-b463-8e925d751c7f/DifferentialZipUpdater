@@ -14,7 +14,45 @@ namespace DifferentialZipUpdater
     {
         public Form1()
         {
-            InitializeComponent();
+            InitializeComponent(); // Initialized UI Component
+        }
+
+        private void updateButton_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void revertButton_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void forceUpdateButton_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Browse_Click(object sender, EventArgs e)
+        {
+
+        }
+    }
+
+    // Updater
+    public class Updater
+    {
+        /// <summary>
+        /// Zips up a folder. Requires PATH to target folder to be zipped.
+        /// <param name="targetFolder">Single parameter.</param>
+        /// </summary>
+        public void ZipFolder(string targetFolder)
+        {
+
         }
     }
 }
