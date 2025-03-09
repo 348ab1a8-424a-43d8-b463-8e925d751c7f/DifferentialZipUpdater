@@ -23,7 +23,7 @@ namespace DifferentialZipUpdater
 
         private void updateButton_Click(object sender, EventArgs e)
         {
-
+            
         }
 
         private void revertButton_Click(object sender, EventArgs e)
@@ -54,9 +54,6 @@ namespace DifferentialZipUpdater
                 // Get target file
                 targetFilePath = browseFolderDialog.FileName; // Get the path of the specified file
                 folderPathUrl.Text = targetFilePath; // Set text box to selected file path
-
-                var targetFileInfo = new FileInfo(targetFilePath);
-
                 targetFolderPath = Path.GetDirectoryName(targetFilePath); // Get the absolute path from file path.
 
                 // For debugging, comment when done.
