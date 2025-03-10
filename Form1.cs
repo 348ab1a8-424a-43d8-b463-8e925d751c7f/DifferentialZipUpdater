@@ -37,7 +37,8 @@ namespace DifferentialZipUpdater
 
         private void button3_Click(object sender, EventArgs e)
         {
-
+            // Hard Code Path for testing
+            Updater.CompareFolderToZipContents(targetFolderPath, @"D:\TestEnv\Archive\Files.Zip");
         }
 
         private void forceUpdateButton_Click(object sender, EventArgs e)
@@ -128,7 +129,51 @@ namespace DifferentialZipUpdater
         /// </summary>
         public static void CompareFolderToZipContents(string sourceFolder, string sourceZipFile)
         {
+            // Track all files from the source folder.
+            List<string> sourceFiles = new List<string>(Directory.EnumerateFiles(sourceFolder, "*", SearchOption.AllDirectories)); // Path to all files in the Directory & Sub directories.
 
+            // Track all entrys from sourceZipFile
+            List<ZipArchiveEntry> zipEntries = new List<ZipArchiveEntry>();
+
+            using (ZipArchive archive = ZipFile.OpenRead(sourceZipFile))
+            {
+                foreach (ZipArchiveEntry entry in archive.Entries)
+                {
+                    zipEntries.Add(entry);
+                }
+            }
+            string str = "";
+
+            foreach (var en in zipEntries)
+            {
+                str += en + "\n";
+            }
+            MessageBox.Show(str);
+
+            // Compare the Last Modified Time between both lists.
+            List<string> filesDifferent = new List<string>();
+            List<string> filesNew = new List<string>();
+
+            int numberOfFiles = Math.Min(sourceFiles.Count(), zipEntries.Count());
+
+            for (int i = 0; i < numberOfFiles; i++)
+            {
+                FileInfo fileFromSource = new FileInfo(sourceFiles[i]);
+                if (fileFromSource.LastWriteTimeUtc < zipEntries[i].LastWriteTime.UtcDateTime) // If source file is older than zip entry
+                {
+                    filesDifferent.Add(zipEntries[i].Name);
+                }
+            }
+
+            // Debugging
+            //string fiDif = "";
+            //string fiNew = "";
+            //foreach (var fiD in filesDifferent)
+            //{
+            //    fiDif += fiD + "\n";
+            //}
+
+            //MessageBox.Show("Source Folder File Count: " + sourceFiles.Count() + "\n Zip Entries Count: " + zipEntries.Count() + "\nFilesDifferent: " + fiDif);
         }
     }
 }
