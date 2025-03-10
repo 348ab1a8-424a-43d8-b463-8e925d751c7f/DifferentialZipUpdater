@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.IO.Compression;
@@ -129,35 +130,92 @@ namespace DifferentialZipUpdater
         /// </summary>
         public static void CompareFolderToZipContents(string sourceFolder, string sourceZipFile)
         {
-            // Track all files from the source folder.
-            List<string> sourceFiles = new List<string>(Directory.EnumerateFiles(sourceFolder, "*", SearchOption.AllDirectories)); // Path to all files in the Directory & Sub directories.
+            // Search folder for files
+            Updater search = new Updater();
+            List<string> folderFilePaths = search.GetAllRelativeFolderFilePaths(sourceFolder);
 
-            string strF = "";
-            foreach (var sf in sourceFiles)
+            // Remove D:\TestEnv\
+            List<string> cleanedFolderFilePaths = new List<string>();
+            foreach (var paths in folderFilePaths)
             {
-                strF += sf + "\n";
+                cleanedFolderFilePaths.Add(paths.Replace("D:\\TestEnv\\", ""));
             }
 
             // Track all entrys from sourceZipFile
+            List<ZipArchiveEntry> zipEntries = search.GetAllZipEntries(sourceZipFile);
+
+            // Convert ZipEntry File Paths to Window File Path Style
+            List<string> cleanZipEntries = new List<string>();
+            foreach (var entry in zipEntries)
+            {
+                cleanZipEntries.Add(entry.FullName.Replace("/", "\\"));
+            }
+
+            // Check what is missing in Zip File & what is missing in Folder
+            var missingInZip = cleanedFolderFilePaths.Except(cleanZipEntries, StringComparer.OrdinalIgnoreCase).ToList();
+            var missingInFolder = cleanZipEntries.Except(cleanedFolderFilePaths, StringComparer.OrdinalIgnoreCase).ToList();
+
+            // DEBUGGING
+            string strF = "";
+            string strE = "";
+            string strC = "";
+            string strMz = "";
+            string strMf = "";
+            foreach (var sf in folderFilePaths)
+            {
+                strF += sf + "\n";
+            }
+            foreach (var en in zipEntries)
+            {
+                strE += en + "\n";
+            }
+            foreach (var en in cleanZipEntries)
+            {
+                strC += en + "\n";
+            }
+            foreach (var en in missingInZip)
+            {
+                strMz += en + "\n";
+            }
+            foreach (var en in missingInFolder)
+            {
+                strC += en + "\n";
+            }
+            //MessageBox.Show("Source Folder Paths:\n" + strF + "\nZip Entry Paths:\n" + strE + "\n Cleaned Zip Entry Paths:\n" + strC);
+            //MessageBox.Show("Source Folder Paths:\n" + strF +"\nCleaned Zip Entry Paths:\n" + strC + "\nMissing in ZIP:\n" + strMz + "\nMissing in Folder:\n" + strMf);
+            MessageBox.Show("\nMissing in ZIP:\n" + strMz + "\nMissing in Folder:\n" + strMf);
+        }
+
+
+        /// <summary>
+        /// Gets all relative folder file paths for all files in the current directory and subdirectories.
+        /// <param name="targetFolder"></param>
+        /// </summary>
+        public List<string> GetAllRelativeFolderFilePaths(string targetFolder)
+        {
+            List<string> relFolderFilePaths = new List<string>(Directory.EnumerateFiles(targetFolder, "*", SearchOption.AllDirectories));
+            return relFolderFilePaths;
+        }
+
+        /// <summary>
+        /// Gets all Zip Entries as a list.
+        /// <param name="targetZip"></param>
+        /// </summary>
+        public List<ZipArchiveEntry> GetAllZipEntries(string targetZip)
+        {
             List<ZipArchiveEntry> zipEntries = new List<ZipArchiveEntry>();
 
-            using (ZipArchive archive = ZipFile.OpenRead(sourceZipFile))
+            using (ZipArchive archive = ZipFile.OpenRead(targetZip))
             {
                 foreach (ZipArchiveEntry entry in archive.Entries)
                 {
                     if (string.IsNullOrEmpty(entry.Name)) // Skip folder entries
                         continue;
-                    
+
                     zipEntries.Add(entry);
                 }
             }
-            string strE = "";
-
-            foreach (var en in zipEntries)
-            {
-                strE += en + "\n";
-            }
-            MessageBox.Show("Source Folder Paths:\n" + strF + "\nZip Entry Paths:\n" + strE);
+            return zipEntries;
         }
     }
 }
