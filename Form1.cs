@@ -17,6 +17,9 @@ namespace DifferentialZipUpdater
         string targetFilePath = "";
         string targetFolderPath = "";
 
+        // Possibly can just leave static if location doesn't change.
+        string preVersionZipFilePath = @"D:\\TestEnv\\PreviousVersion\PreviousVersion.zip";
+
         public Form1()
         {
             InitializeComponent(); // Initialized UI Component
@@ -29,7 +32,7 @@ namespace DifferentialZipUpdater
 
         private void revertButton_Click(object sender, EventArgs e)
         {
-
+            Updater.revertVersion(preVersionZipFilePath, targetFolderPath);
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -67,19 +70,19 @@ namespace DifferentialZipUpdater
     public class Updater
     {
         /// <summary>
-        /// Zips up a folder. Requires PATH to target folder to be zipped.
-        /// <param name="targetFolder">Single parameter.</param>
+        /// Zips up a folder.
+        /// <param name="targetFolder"></param>
         /// </summary>
         public static void ZipPreviousVersion(string targetFolder)
         {
             // Create a directory first for Previous Version.
             // Cannot zip to same directory being zipped as it's in use.
-            string prevVersionFolderPath = "D:\\TestEnv\\PreviousVersion";
+            string preVersionFolderPath = "D:\\TestEnv\\PreviousVersion";
             try
             {
-                if (!Directory.Exists(prevVersionFolderPath))
+                if (!Directory.Exists(preVersionFolderPath))
                 {
-                    Directory.CreateDirectory(prevVersionFolderPath);
+                    Directory.CreateDirectory(preVersionFolderPath);
                 }
             }
             catch (Exception e)
@@ -91,19 +94,41 @@ namespace DifferentialZipUpdater
             // If it exists, delete then create.
             // If it doesn't exist, just create.
 
-            if (File.Exists(prevVersionFolderPath + "\\PreviousVersion.zip"))
+            if (File.Exists(preVersionFolderPath + "\\PreviousVersion.zip"))
             {
-                File.Delete(prevVersionFolderPath + "\\PreviousVersion.zip");
-                ZipFile.CreateFromDirectory(targetFolder, prevVersionFolderPath + "\\PreviousVersion.zip");
+                File.Delete(preVersionFolderPath + "\\PreviousVersion.zip");
+                ZipFile.CreateFromDirectory(targetFolder, preVersionFolderPath + "\\PreviousVersion.zip");
             }
             else
             {
-                ZipFile.CreateFromDirectory(targetFolder, prevVersionFolderPath + "\\PreviousVersion.zip");
+                ZipFile.CreateFromDirectory(targetFolder, preVersionFolderPath + "\\PreviousVersion.zip");
             }
 
-            // Check latest version location, see if its archived, if not, then zip it to an archive.
+        }
 
-            // If current version is old, then should 
+        /// <summary>
+        /// Reverts to Previous Version by extracting contents from PreviousVersion.zip to destination folder.
+        /// <param name="sourceZipFile"></param>
+        /// <param name="destFolder"></param>
+        /// </summary>
+        public static void revertVersion(string sourceZipFile, string destFolder)
+        {
+            // Delete directory then recreate the directory - Fastest option
+            Directory.Delete(destFolder, true);
+            Directory.CreateDirectory(destFolder);
+
+            // Extract contents from PreviousVersion to Folder
+            ZipFile.ExtractToDirectory(sourceZipFile, destFolder);
+        }
+
+        /// <summary>
+        /// Compares the contents of a folder to entries in a Zip file.
+        /// <param name="sourceFolder"></param>
+        /// <param name="sourceZipFile"></param>
+        /// </summary>
+        public static void CompareFolderToZipContents(string sourceFolder, string sourceZipFile)
+        {
+
         }
     }
 }
