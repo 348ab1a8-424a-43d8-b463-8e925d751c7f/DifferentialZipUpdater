@@ -132,6 +132,12 @@ namespace DifferentialZipUpdater
             // Track all files from the source folder.
             List<string> sourceFiles = new List<string>(Directory.EnumerateFiles(sourceFolder, "*", SearchOption.AllDirectories)); // Path to all files in the Directory & Sub directories.
 
+            string strF = "";
+            foreach (var sf in sourceFiles)
+            {
+                strF += sf + "\n";
+            }
+
             // Track all entrys from sourceZipFile
             List<ZipArchiveEntry> zipEntries = new List<ZipArchiveEntry>();
 
@@ -139,41 +145,19 @@ namespace DifferentialZipUpdater
             {
                 foreach (ZipArchiveEntry entry in archive.Entries)
                 {
+                    if (string.IsNullOrEmpty(entry.Name)) // Skip folder entries
+                        continue;
+                    
                     zipEntries.Add(entry);
                 }
             }
-            string str = "";
+            string strE = "";
 
             foreach (var en in zipEntries)
             {
-                str += en + "\n";
+                strE += en + "\n";
             }
-            MessageBox.Show(str);
-
-            // Compare the Last Modified Time between both lists.
-            List<string> filesDifferent = new List<string>();
-            List<string> filesNew = new List<string>();
-
-            int numberOfFiles = Math.Min(sourceFiles.Count(), zipEntries.Count());
-
-            for (int i = 0; i < numberOfFiles; i++)
-            {
-                FileInfo fileFromSource = new FileInfo(sourceFiles[i]);
-                if (fileFromSource.LastWriteTimeUtc < zipEntries[i].LastWriteTime.UtcDateTime) // If source file is older than zip entry
-                {
-                    filesDifferent.Add(zipEntries[i].Name);
-                }
-            }
-
-            // Debugging
-            //string fiDif = "";
-            //string fiNew = "";
-            //foreach (var fiD in filesDifferent)
-            //{
-            //    fiDif += fiD + "\n";
-            //}
-
-            //MessageBox.Show("Source Folder File Count: " + sourceFiles.Count() + "\n Zip Entries Count: " + zipEntries.Count() + "\nFilesDifferent: " + fiDif);
+            MessageBox.Show("Source Folder Paths:\n" + strF + "\nZip Entry Paths:\n" + strE);
         }
     }
 }
