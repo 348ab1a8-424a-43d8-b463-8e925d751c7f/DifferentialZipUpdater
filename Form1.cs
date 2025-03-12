@@ -155,35 +155,67 @@ namespace DifferentialZipUpdater
             var missingInZip = cleanedFolderFilePaths.Except(cleanZipEntries, StringComparer.OrdinalIgnoreCase).ToList();
             var missingInFolder = cleanZipEntries.Except(cleanedFolderFilePaths, StringComparer.OrdinalIgnoreCase).ToList();
 
+            // TEST FROM WORK
+            string entriesStr = string.Empty;
+            string foldersStr = string.Empty;
+            string destFilesStr = string.Empty;
+            string destFoldStr = string.Empty;
+            string cleanPaths = string.Empty;
+            string cleanFilePaths = string.Empty;
+            List<string> cleanEntryPaths = new List<string>(); // Convert Zip Path format to Windows OS format
+            List<string> cleanFolderPaths = new List<string>(); 
+
+            using (var zip = ZipFile.OpenRead(sourceZipFile))
+            {
+                List<ZipArchiveEntry> entries = zip.Entries.Where(e => e.Name != "").ToList();
+                List<ZipArchiveEntry> folders = zip.Entries.Where(e => e.Name == "").ToList();
+                foreach (var en in entries) { entriesStr += en + "\n"; }
+                foreach (var fld in folders) { foldersStr += fld + "\n"; }
+
+                foreach (var entry in entries) { cleanEntryPaths.Add(entry.FullName.Replace("/", "\\")); }
+                foreach (var fld in folders) { cleanFolderPaths.Add(fld.FullName.Replace("/", "\\")); }
+            }
+
+            List<FileInfo> destFiles = new DirectoryInfo(sourceFolder).GetFiles("*", SearchOption.AllDirectories).ToList();
+            string[] destFolders = Directory.GetDirectories(sourceFolder);
+
+            foreach (var desFi in destFiles) { destFilesStr += desFi + "\n"; }
+            foreach (var destFld in destFolders) { destFoldStr += destFld + "\n"; }
+            foreach (var path in cleanEntryPaths) { cleanPaths += path + "\n"; }
+            foreach (var fldPath in cleanFolderPaths) { cleanFilePaths += fldPath + "\n"; }
+
+            MessageBox.Show("Entries OLD:\n" + entriesStr + "Entries NEW:\n" + cleanPaths); // Compare entries default path to modified entry paths
+            MessageBox.Show("Folders OLD:\n" + foldersStr + "Folders NEW:\n" + cleanFilePaths); // Compare folders default file path to modified folder file paths
+            MessageBox.Show("Files:\n" + destFilesStr + "Folders:\n" + destFoldStr);
             // DEBUGGING
-            string strF = "";
-            string strE = "";
-            string strC = "";
-            string strMz = "";
-            string strMf = "";
-            foreach (var sf in folderFilePaths)
-            {
-                strF += sf + "\n";
-            }
-            foreach (var en in zipEntries)
-            {
-                strE += en + "\n";
-            }
-            foreach (var en in cleanZipEntries)
-            {
-                strC += en + "\n";
-            }
-            foreach (var en in missingInZip)
-            {
-                strMz += en + "\n";
-            }
-            foreach (var en in missingInFolder)
-            {
-                strC += en + "\n";
-            }
+            //string strF = "";
+            //string strE = "";
+            //string strC = "";
+            //string strMz = "";
+            //string strMf = "";
+            //foreach (var sf in folderFilePaths)
+            //{
+            //    strF += sf + "\n";
+            //}
+            //foreach (var en in zipEntries)
+            //{
+            //    strE += en + "\n";
+            //}
+            //foreach (var en in cleanZipEntries)
+            //{
+            //    strC += en + "\n";
+            //}
+            //foreach (var en in missingInZip)
+            //{
+            //    strMz += en + "\n";
+            //}
+            //foreach (var en in missingInFolder)
+            //{
+            //    strC += en + "\n";
+            //}
             //MessageBox.Show("Source Folder Paths:\n" + strF + "\nZip Entry Paths:\n" + strE + "\n Cleaned Zip Entry Paths:\n" + strC);
             //MessageBox.Show("Source Folder Paths:\n" + strF +"\nCleaned Zip Entry Paths:\n" + strC + "\nMissing in ZIP:\n" + strMz + "\nMissing in Folder:\n" + strMf);
-            MessageBox.Show("\nMissing in ZIP:\n" + strMz + "\nMissing in Folder:\n" + strMf);
+            //MessageBox.Show("\nMissing in ZIP:\n" + strMz + "\nMissing in Folder:\n" + strMf);
         }
 
 
